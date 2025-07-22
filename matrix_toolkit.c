@@ -1,9 +1,8 @@
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
-// SINGLE MATRIX OPERATION OR DOUBLE
-// SINGLE - INVERSE, TRASPOSE, POWER, CHT, EIGEN VALUES, 
-// DOUBLE - ADDITION, SUBTRACTION, MULTIPLICATION, 
+#include <time.h>
+
 void addition(double A1, double A2, double A3, double A4, double B1, double B2, double B3, double B4);
 void subtraction(double A1, double A2, double A3, double A4, double B1, double B2, double B3, double B4);
 void multiplication(double A1, double A2, double A3, double A4, double B1, double B2, double B3, double B4);
@@ -20,6 +19,10 @@ int main()
 {
 
     int j=0, n;
+
+    time_t startTime, endTime;
+    time(&startTime);
+
     double A1, A2, A3, A4;
     double B1, B2, B3, B4;
     char choice1, choice2;
@@ -36,15 +39,16 @@ int main()
     {
 
     printf("\n========MENU========\n");
-    printf("\nA) ADDITION.");
-    printf("\nB) SUBTRACTION.");
-    printf("\nC) MULTIPLICATION.");
-    printf("\nD) INVERSE.");
-    printf("\nE) POWER.");
-    printf("\nF) CHARACTERISTIC EQUATION.");
-    printf("\nG) EIGEN VALUES.");
-    printf("\nH) SOLVE LINES.");
-    printf("\nI) EXIT.\n\n");
+    printf("\n[A] ADDITION.");
+    printf("\n[B] SUBTRACTION.");
+    printf("\n[C] MULTIPLICATION.");
+    printf("\n[D] INVERSE.");
+    printf("\n[E] POWER.");
+    printf("\n[F] CHARACTERISTIC EQUATION.");
+    printf("\n[G] EIGEN VALUES.");
+    printf("\n[H] SOLVE LINES.");
+    printf("\n[I] EXIT.");
+    printf("\n\n====================\n\n");
 
     scanf(" %c", &choice1);
 
@@ -78,11 +82,6 @@ int main()
             multiplication(A1, A2, A3, A4, B1, B2, B3, B4);
             break;
 
-        case 'D':
-        case 'd':
-            inverse(A1, A2, A3, A4);
-            break;
-
         default:
             printf("INVALID CHOICE.\n");
             break;
@@ -113,15 +112,24 @@ int main()
             scanf("%d", &n);
 
 
-            if(n>0)
+            if(n>0 && n<20)
             {
             printf("\nENTER ROW1 FOR A: [A1,A2]\t=\t");
             scanf("%lf %lf", &A1, &A2);
             printf("ENTER ROW2 FOR A: [A3,A4]\t=\t");
             scanf("%lf %lf", &A3, &A4);
+
+            power(A1,A2,A3,A4,n);
+            }
+            else if(n>20)
+            {
+                printf("\nTOO HIGH! PLEASE ENTER A POWER <= 20 TO AVOID MATRIX OVERLOAD.\n");
+                printf("\nRETURNING YOU SAFELY TO MENU...\n");
+                continue;
             }
             else if(n==0)
             {
+                printf("\nA^0 = I (IDENTITY MATRIX)\n");
                 printf("====================\n");
                 printf("  | 1.00  0.00 |\n");
                 printf("  | 0.00  1.00 |\n");
@@ -131,7 +139,6 @@ int main()
             {
                 printf("\nNOT BUILT YET.\n");
             }
-            power(A1,A2,A3,A4,n);
     }
     else if(choice1=='F' || choice1=='f')
     {
@@ -139,6 +146,8 @@ int main()
             scanf("%lf %lf", &A1, &A2);
             printf("ENTER ROW2 FOR A: [A3,A4]\t=\t");
             scanf("%lf %lf", &A3, &A4);
+
+            printf("\nTHE CHARACTERISTIC EQUATION: A^2 - (TRACE)A + (DETERMINANT)I = 0\n");
 
             cht(A1,A2,A3,A4);
     }
@@ -155,7 +164,7 @@ int main()
     {
             printf("\nENTER LINE1: a1*x + b1*y = c1\n");
             scanf("%lf %lf %lf", &a1, &b1, &c1);
-            printf("\nENTER LINE1: a2*x + b2*y = c2\n");
+            printf("\nENTER LINE2: a2*x + b2*y = c2\n");
             scanf("%lf %lf %lf", &a2, &b2, &c2);
 
             lines(a1,b1,c1,a2,b2,c2);
@@ -173,6 +182,7 @@ int main()
 
     if(choice2=='Y' || choice2=='y')
     {
+        printf("\nRETURNING TO MENU...\n");
         continue;
     }
     else if(choice2=='N' || choice2=='n')
@@ -186,8 +196,24 @@ int main()
     }
 
     }
-    printf("\n! ! ! AAVJO ! ! !");
+    time(&endTime);
+
+    printf("\n==============================");
+    printf("\n||     ! ! ! AAVJO ! ! !    ||");
+    printf("\n||  TOOLKIT CLOSED SAFELY   ||");
+    printf("\n==============================\n");
     printf("\nPROGRAM RAN %d TIMES.\n\n", j);
+
+    printf("\nSESSION STARTED AT: %s", ctime(&startTime));
+    printf("SESSION ENDED AT: %s", ctime(&endTime));
+
+    double duration = difftime(endTime, startTime);
+    int mins = duration / 60;
+    int secs = (int)duration % 60;
+    printf("\nTOTAL SESSION DURATION: %d MINUTES, %d SECONDS.\n", mins, secs);
+
+    printf("\nTHANK YOU FOR USING MATRIX TOOLKIT - YTRS.\n");
+    printf("REMEMBER: MATHEMATICS IS POWER.\n\n");
 
     system("pause");
     getchar();
@@ -250,9 +276,9 @@ int main()
         
         determinant = (A1*A4)-(A2*A3);
 
-        if(determinant==0)
+        if(fabs(determinant) < 1e-10)
         {
-            printf("\nMATRIX IS NON-INVERTABLE.");
+            printf("\nMATRIX IS NON-INVERTIBLE.\n");
         }
         else
         {
@@ -261,7 +287,7 @@ int main()
             C3=-(A3)/(determinant);
             C4=(A1)/(determinant);
 
-            printf("\nTHE MULTIPLICATION MATRIX C:\n\n");
+            printf("\nTHE INVERSE MATRIX C:\n\n");
             printf("====================\n");
             printf("  | %.2lf  %.2lf |\n", C1, C2);
             printf("  | %.2lf  %.2lf |\n", C3, C4);
@@ -338,38 +364,41 @@ int main()
 
         if(disc==0)
         {
-            e1 = -(trace)/2;
-            e2 = -(trace)/2;
+            e1 = (trace)/2;
+            e2 = (trace)/2;
             printf("\n\tEIGEN VALUES ARE REAL AND SAME.\n");
             printf("\tEIGEN1 = %.2lf && EIGEN2 = %.2lf", e1, e2);
         }
         else if(disc>0)
         {
-            e1 = (-(trace)+disc)/2;
-            e2 = (-(trace)-disc)/2;
+            e1 = (trace+disc)/2;
+            e2 = (trace-disc)/2;
             printf("\n\tEIGEN VALUES ARE REAL AND DISTINCT.\n");
             printf("\tEIGEN1 = %.2lf && EIGEN2 = %.2lf", e1, e2);
         }
         else
         {
-            e1 = -(trace)/2;
-            e2 = -(trace)/2;
+            e1 = (trace)/2;
+            e2 = (trace)/2;
 
-            printf("\n\tEIGEN VALUES ARE DISTINCT AND IMAGINARY.\n");
-            printf("\tEIGEN1 = %.2lf+i%.2lf && EIGEN2 = %.2lf-i%.2lf", e1, (-disc/2), e2, (-disc/2));
+            printf("\n\tEIGEN VALUES ARE COMPLEX CONJUGATE.\n");
+            printf("\tEIGEN1 = %.2lf+i%.2lf\n", e1, fabs(disc/2));
+            printf("\nEIGEN2 = %.2lf-i%.2lf\n", e2, fabs(disc/2));
         }
     }
     void lines(double a1, double b1, double c1, double a2, double b2, double c2)
     {
-        double x, y;
+        double x, y, D;
 
-        if((a1*b2-a2*b1)!=0)
+        D = a1*b2 - a2*b1;
+
+        if(fabs(D) > 1e-10)
         {
             x = (b2*c1 - b1*c2)/(a1*b2-a2*b1);
             y = (a1*c2 - a2*c1)/(a1*b2-a2*b1);
             printf("\nX = %.2lf && Y = %.2lf", x, y);
         }
-        else if((a1*b2-a2*b1)==0 && ((b2*c1 - b1*c2)==0) && ((a1*c2 - a2*c1)==0))
+        else if(fabs(D) < 1e-10 && (fabs(b2*c1 - b1*c2) < 1e-10) && (fabs(a1*c2 - a2*c1) < 1e-10))
         {
             printf("\nINFINITELY MANY SOLUTIONS EXIST.\n");
         }
