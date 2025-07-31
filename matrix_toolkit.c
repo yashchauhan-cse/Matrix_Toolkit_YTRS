@@ -32,7 +32,6 @@ int main()
     printf("\n\n=========================================\n");
     printf("||       MATRIX TOOLKIT - YTRS v1.0    ||\n");
     printf("||          Created by: YASH           ||\n");
-    printf("||         Future Google C.E.O.        ||\n");
     printf("=========================================\n\n");
 
     for (;;)
